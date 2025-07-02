@@ -6,7 +6,6 @@ import {
   UserGroupIcon,
   RocketLaunchIcon,
   LightBulbIcon,
-  CpuChipIcon,
   CreditCardIcon,
   StarIcon,
   ChevronRightIcon,
@@ -34,13 +33,26 @@ export default function Home() {
   };
 }
 
+interface Particle {
+  id: number;
+  width: number;
+  height: number;
+  left: number;
+  top: number;
+  background: string;
+  boxShadow: string;
+  animationDuration: number;
+  animationDelay: number;
+}
+
 const [blogs, setBlogs] = useState<BlogPosts[]>([]);
+const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.20.156:5000/api/blogs",
+          "https://thetechtraining.in/backend/api/blogs",
           {
             withCredentials: true,
           }
@@ -53,6 +65,29 @@ const [blogs, setBlogs] = useState<BlogPosts[]>([]);
     };
 
     fetchBlogs();
+  }, []);
+
+  useEffect(() => {
+    // Generate particles only on client side to avoid hydration issues
+    const generateParticles = () => {
+      const newParticles: Particle[] = [];
+      for (let i = 0; i < 12; i++) {
+        newParticles.push({
+          id: i,
+          width: Math.random() * 4 + 2,
+          height: Math.random() * 4 + 2,
+          left: Math.random() * 100,
+          top: Math.random() * 100,
+          background: i % 2 === 0 ? 'rgba(56, 133, 122, 0.6)' : 'rgba(255, 147, 76, 0.6)',
+          boxShadow: i % 2 === 0 ? '0 0 10px rgba(56, 133, 122, 0.8)' : '0 0 10px rgba(255, 147, 76, 0.8)',
+          animationDuration: Math.random() * 3 + 2,
+          animationDelay: Math.random() * 2
+        });
+      }
+      setParticles(newParticles);
+    };
+
+    generateParticles();
   }, []);
 
   return (
@@ -220,19 +255,19 @@ const [blogs, setBlogs] = useState<BlogPosts[]>([]);
           {/* Particle Effects */}
           <div className="absolute inset-0">
             {/* Floating particles */}
-            {[...Array(12)].map((_, i) => (
+            {particles.map((particle) => (
               <div
-                key={i}
+                key={particle.id}
                 className="absolute rounded-full animate-pulse"
                 style={{
-                  width: Math.random() * 4 + 2 + 'px',
-                  height: Math.random() * 4 + 2 + 'px',
-                  left: Math.random() * 100 + '%',
-                  top: Math.random() * 100 + '%',
-                  background: i % 2 === 0 ? 'rgba(56, 133, 122, 0.6)' : 'rgba(255, 147, 76, 0.6)',
-                  boxShadow: i % 2 === 0 ? '0 0 10px rgba(56, 133, 122, 0.8)' : '0 0 10px rgba(255, 147, 76, 0.8)',
-                  animationDuration: (Math.random() * 3 + 2) + 's',
-                  animationDelay: Math.random() * 2 + 's'
+                  width: particle.width + 'px',
+                  height: particle.height + 'px',
+                  left: particle.left + '%',
+                  top: particle.top + '%',
+                  background: particle.background,
+                  boxShadow: particle.boxShadow,
+                  animationDuration: particle.animationDuration + 's',
+                  animationDelay: particle.animationDelay + 's'
                 }}
               />
             ))}
@@ -1125,7 +1160,7 @@ const [blogs, setBlogs] = useState<BlogPosts[]>([]);
 
                 <p className="text-gray-600 mb-4 leading-relaxed text-xs">
                 We have the expertise to develop an online hotel booking
-                  software that's easy to use and integrated with your
+                  software that&apos;s easy to use and integrated with your
                 existing back-end systems.
               </p>
 
@@ -1164,7 +1199,7 @@ const [blogs, setBlogs] = useState<BlogPosts[]>([]);
               </div>
 
                 <p className="text-gray-600 mb-4 leading-relaxed text-xs">
-                  We're the best in the business at developing school
+                  We&apos;re the best in the business at developing school
                 software. We can create a custom management system for your
                 school.
               </p>
